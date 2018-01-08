@@ -1,7 +1,7 @@
 service: chromeless-serverless
 
 custom:
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   debug: "*"
   awsIotHost: ${env:AWS_IOT_HOST}
   chrome:
@@ -12,7 +12,7 @@ provider:
   name: aws
   runtime: nodejs6.10
   stage: ${self:custom.stage}
-  region: eu-west-1
+  region: us-west-2
   environment:
     DEBUG: ${self:custom.debug}
     AWS_IOT_HOST: ${self:custom.awsIotHost}
@@ -38,6 +38,8 @@ provider:
             - Ref: AWS::AccountId
             - "-"
             - Ref: AWS::Region
+            - "-"
+            - ${self:custom.stage}
             - -chromeless
             - /*
 
@@ -61,9 +63,10 @@ functions:
           - - Ref: AWS::AccountId
             - "-"
             - Ref: AWS::Region
+            - "-"
+            - ${self:custom.stage}
             - -chromeless
       CHROMELESS_S3_OBJECT_KEY_PREFIX: ""
-      CHROMELESS_S3_OBJECT_ACL: "public-read"
       CHROMELESS_S3_BUCKET_URL:
         Fn::GetAtt:
           - Bucket
@@ -119,6 +122,8 @@ resources:
             - - Ref: AWS::AccountId
               - "-"
               - Ref: AWS::Region
+              - "-"
+              - ${self:custom.stage}
               - -chromeless
         LifecycleConfiguration:
           Rules:
